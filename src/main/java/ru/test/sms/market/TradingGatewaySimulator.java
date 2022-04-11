@@ -2,6 +2,7 @@ package ru.test.sms.market;
 
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Service
@@ -27,6 +28,8 @@ public class TradingGatewaySimulator {
                 .orderType(order.getOrderType())
                 .count(order.getCount())
                 .account(account)
+                .price(order.getPrice())
+                .date(Instant.now().toEpochMilli())
                 .build();
 
         matchingEngine.addOrder(limitOrder);

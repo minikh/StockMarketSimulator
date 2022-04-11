@@ -2,11 +2,13 @@ package ru.test.sms.market;
 
 import lombok.Builder;
 import lombok.Getter;
+import lombok.ToString;
 
 import java.util.UUID;
 
 @Getter
 @Builder
+@ToString
 public class LimitOrder {
     private final UUID orderId;
     private final OrderType orderType;

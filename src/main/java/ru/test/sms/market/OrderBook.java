@@ -1,9 +1,10 @@
 package ru.test.sms.market;
 
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.UUID;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.*;
+
+@Slf4j
 public class OrderBook {
     final String symbol;
     //    private final ConcurrentSkipListMap<Integer, LimitOrder> buyOrders = new ConcurrentSkipListMap<>();
@@ -15,57 +16,88 @@ public class OrderBook {
         this.symbol = symbol;
     }
 
-    public void addOrder(LimitOrder limitOrder) {
+    public List<Trade> addOrder(LimitOrder limitOrder) {
+        List<Trade> tradeList = null;
         switch (limitOrder.getOrderType()) {
             case BUY:
-                buy(limitOrder);
+//                log.info("Новая заявка на продажу: {}", limitOrder);
+                tradeList = buy(limitOrder);
                 break;
             case SELL:
-                sell(limitOrder);
+//                log.info("Новая заявка на покупку: {}", limitOrder);
+                tradeList = sell(limitOrder);
                 break;
         }
+
+        return tradeList != null ? tradeList : new ArrayList<>();
     }
 
-    private void buy(LimitOrder buyOrder) {
-        Integer count = buyOrder.getCount();
+    private List<Trade> buy(LimitOrder buyOrder) {
+        Integer needCount = buyOrder.getCount();
+        final List<Trade> tradeList = new ArrayList<>();
 
         do {
-            final Map.Entry<LimitOrderKey, LimitOrder> sellOrder = sellOrders.firstEntry();
-            if (sellOrder.getValue().getPrice() <= buyOrder.getPrice()) {
+            final Map.Entry<LimitOrderKey, LimitOrder> sellOrder = sellOrders.lastEntry();
+            if (sellOrder != null && sellOrder.getValue().getPrice() >= buyOrder.getPrice()) {
                 final Integer sellCount = sellOrder.getValue().getCount();
-                if (sellCount <= count) {
+                if (sellCount <= needCount) {
                     sellOrders.remove(sellOrder.getKey());
-                    count -= sellCount;
+                    log.info("Продано: {} шт {} по цене {} ({})", sellCount, sellOrder.getValue().getAccount().getAccountId(), sellOrder.getValue().getPrice(), buyOrder.getPrice());
+                    needCount -= sellCount;
                 } else {
-                    sellOrder.getValue().minusCount(count);
-                    count = 0;
+                    sellOrder.getValue().minusCount(needCount);
+                    log.info("Куплено: {} шт {} по цене {} ({})", needCount, sellOrder.getValue().getAccount().getAccountId(), sellOrder.getValue().getPrice(), buyOrder.getPrice());
+                    needCount = 0;
                 }
+
+                tradeList.add(Trade.builder()
+                        .buyOrder(buyOrder).sellOrder(sellOrder.getValue())
+                        .count(sellCount)
+                        .price(sellOrder.getValue().getPrice())
+                        .build());
             } else {
                 buyOrders.put(buyOrder.createKey(), buyOrder);
-                count = 0;
+                needCount = 0;
             }
-        } while (count != 0);
+        } while (needCount != 0);
+
+        log.info("Заявок на продажу: {}. Заявок на покупку: {}", sellOrders.size(), buyOrders.size());
+
+        return tradeList;
     }
 
-    private void sell(LimitOrder sellOrder) {
-        Integer count = sellOrder.getCount();
+    private List<Trade> sell(LimitOrder sellOrder) {
+        Integer needCount = sellOrder.getCount();
+        final List<Trade> tradeList = new ArrayList<>();
 
         do {
-            final Map.Entry<LimitOrderKey, LimitOrder> buyOrder = buyOrders.lastEntry();
-            if (buyOrder.getValue().getPrice() <= sellOrder.getPrice()) {
+            final Map.Entry<LimitOrderKey, LimitOrder> buyOrder = buyOrders.firstEntry();
+            if (buyOrder != null && buyOrder.getValue().getPrice() <= sellOrder.getPrice()) {
                 final Integer buyCount = buyOrder.getValue().getCount();
-                if (buyCount <= count) {
+                if (buyCount <= needCount) {
                     buyOrders.remove(buyOrder.getKey());
-                    count -= buyCount;
+                    log.info("Куплено: {} шт у {} по цене {} ({})", buyCount, buyOrder.getValue().getAccount().getAccountId(), buyOrder.getValue().getPrice(), sellOrder.getPrice());
+                    needCount -= buyCount;
                 } else {
-                    buyOrder.getValue().minusCount(count);
-                    count = 0;
+                    buyOrder.getValue().minusCount(needCount);
+                    log.info("Куплено: {} шт у {} по цене {} ({})", needCount, buyOrder.getValue().getAccount().getAccountId(), buyOrder.getValue().getPrice(), sellOrder.getPrice());
+                    needCount = 0;
                 }
+
+                tradeList.add(Trade.builder()
+                        .buyOrder(buyOrder.getValue()).sellOrder(sellOrder)
+                        .count(buyCount)
+                        .price(buyOrder.getValue().getPrice())
+                        .build());
             } else {
                 sellOrders.put(sellOrder.createKey(), sellOrder);
-                count = 0;
+                needCount = 0;
             }
-        } while (count != 0);
+        } while (needCount != 0);
+
+        log.info("Заявок на продажу: {}. Заявок на покупку: {}", sellOrders.size(), buyOrders.size());
+
+        return tradeList;
     }
 
     public void cancelOrder(UUID orderId) {

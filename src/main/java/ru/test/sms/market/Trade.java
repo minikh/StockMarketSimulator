@@ -1,10 +1,14 @@
 package ru.test.sms.market;
 
+import lombok.Builder;
 import lombok.Getter;
-import ru.test.sms.market.LimitOrder;
 
 @Getter
+@Builder
 public class Trade {
+    private final Integer price;
+    private Integer count;
+
     private LimitOrder sellOrder;
     private LimitOrder buyOrder;
 }
