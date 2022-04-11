@@ -5,6 +5,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import ru.test.sms.market.account.Account;
 import ru.test.sms.market.account.AccountService;
+import ru.test.sms.market.order.CancelOrderReq;
 import ru.test.sms.market.order.LimitOrder;
 import ru.test.sms.market.order.OrderBook;
 import ru.test.sms.market.trade.Trade;
@@ -34,7 +35,7 @@ public class MatchingEngine {
         final Account account = accountService.getAccount(limitOrder.getAccount());
         switch (limitOrder.getOrderType()) {
             case BUY:
-                account.reserveMoney( accountService.brokerCommission);
+                account.reserveMoney(accountService.brokerCommission);
                 break;
             case SELL:
                 account.reserveMoney(limitOrder.getCount() * limitOrder.getPrice() + accountService.brokerCommission);
@@ -44,14 +45,24 @@ public class MatchingEngine {
         queue.add(limitOrder);
     }
 
-    public void cancelOrder(String stockName, UUID orderId) {
+    public void cancelOrder(UUID accountId, String stockName, CancelOrderReq order) {
         final OrderBook orderBook = orderBooks.get(stockName);
+        final Account account = accountService.getAccount(accountId);
         if (orderBook == null) throw new IllegalArgumentException("Stock " + stockName + " does not exist");
 
-        orderBook.cancelOrder(orderId);
+        switch (order.getOrderType()) {
+            case BUY:
+//                account.reserveMoney(accountService.brokerCommission);
+                break;
+            case SELL:
+//                account.reserveMoney(limitOrder.getCount() * limitOrder.getPrice() + accountService.brokerCommission);
+                break;
+        }
+
+        queue.add(limitOrder);
     }
 
-//    @Scheduled(fixedDelay = 1_000)
+    //    @Scheduled(fixedDelay = 1_000)
     @Scheduled(fixedDelay = 10)
     private void compute() {
         final LimitOrder limitOrder = queue.poll();

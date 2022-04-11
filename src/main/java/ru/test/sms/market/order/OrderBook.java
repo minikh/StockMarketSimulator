@@ -22,11 +22,9 @@ public class OrderBook {
         List<Trade> tradeList = null;
         switch (limitOrder.getOrderType()) {
             case BUY:
-//                log.info("Новая заявка на продажу: {}", limitOrder);
                 tradeList = buy(limitOrder);
                 break;
             case SELL:
-//                log.info("Новая заявка на покупку: {}", limitOrder);
                 tradeList = sell(limitOrder);
                 break;
         }
