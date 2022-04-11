@@ -19,8 +19,12 @@ public class LimitOrder {
 
     private Integer count;
 
-    public LimitOrderKey createKey() {
-        return new LimitOrderKey(orderId, date, price);
+    public SellOrderKey createSellKey() {
+        return new SellOrderKey(orderId, date, price);
+    }
+
+    public BuyOrderKey createBuyKey() {
+        return new BuyOrderKey(orderId, date, price);
     }
 
     public void minusCount(Integer count) {

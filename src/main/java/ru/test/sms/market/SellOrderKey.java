@@ -6,26 +6,23 @@ import lombok.EqualsAndHashCode;
 import java.util.UUID;
 
 @EqualsAndHashCode
-public class LimitOrderKey implements Comparable<LimitOrderKey> {
+public class SellOrderKey implements Comparable<SellOrderKey> {
 
     private final UUID orderId;
     private final Long date;
     private final Integer price;
 
-    public LimitOrderKey(UUID orderId, Long date, Integer price) {
+    public SellOrderKey(UUID orderId, Long date, Integer price) {
         this.orderId = orderId;
         this.date = date;
         this.price = price;
     }
 
     @Override
-    public int compareTo(LimitOrderKey o) {
+    public int compareTo(SellOrderKey o) {
         if (price < o.price) return -1;
         if (price > o.price) return 1;
 
-        if (date < o.date) return -1;
-        if (date > o.date) return -1;
-
-        return 0;
+        return date.compareTo(o.date);
     }
 }

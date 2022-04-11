@@ -3,14 +3,15 @@ package ru.test.sms.market;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentSkipListMap;
 
 @Slf4j
 public class OrderBook {
     final String symbol;
-    //    private final ConcurrentSkipListMap<Integer, LimitOrder> buyOrders = new ConcurrentSkipListMap<>();
-    //    private final ConcurrentSkipListMap<Integer, LimitOrder> sellOrders = new ConcurrentSkipListMap<>();
-    private final TreeMap<LimitOrderKey, LimitOrder> buyOrders = new TreeMap<>();
-    private final TreeMap<LimitOrderKey, LimitOrder> sellOrders = new TreeMap<>();
+    private final ConcurrentSkipListMap<BuyOrderKey, LimitOrder> buyOrders = new ConcurrentSkipListMap<>();
+    private final ConcurrentSkipListMap<SellOrderKey, LimitOrder> sellOrders = new ConcurrentSkipListMap<>();
+//    private final TreeMap<LimitOrderKey, LimitOrder> buyOrders = new TreeMap<>();
+//    private final TreeMap<LimitOrderKey, LimitOrder> sellOrders = new TreeMap<>();
 
     public OrderBook(String symbol) {
         this.symbol = symbol;
@@ -37,7 +38,7 @@ public class OrderBook {
         final List<Trade> tradeList = new ArrayList<>();
 
         do {
-            final Map.Entry<LimitOrderKey, LimitOrder> sellOrder = sellOrders.lastEntry();
+            final Map.Entry<SellOrderKey, LimitOrder> sellOrder = sellOrders.lastEntry();
             if (sellOrder != null && sellOrder.getValue().getPrice() >= buyOrder.getPrice()) {
                 final Integer sellCount = sellOrder.getValue().getCount();
                 if (sellCount <= needCount) {
@@ -56,8 +57,8 @@ public class OrderBook {
                         .price(sellOrder.getValue().getPrice())
                         .build());
             } else {
-                buyOrders.put(buyOrder.createKey(), buyOrder);
-                needCount = 0;
+                buyOrders.put(buyOrder.createBuyKey(), buyOrder);
+                break;
             }
         } while (needCount != 0);
 
@@ -71,7 +72,7 @@ public class OrderBook {
         final List<Trade> tradeList = new ArrayList<>();
 
         do {
-            final Map.Entry<LimitOrderKey, LimitOrder> buyOrder = buyOrders.firstEntry();
+            final Map.Entry<BuyOrderKey, LimitOrder> buyOrder = buyOrders.lastEntry();
             if (buyOrder != null && buyOrder.getValue().getPrice() <= sellOrder.getPrice()) {
                 final Integer buyCount = buyOrder.getValue().getCount();
                 if (buyCount <= needCount) {
@@ -90,8 +91,8 @@ public class OrderBook {
                         .price(buyOrder.getValue().getPrice())
                         .build());
             } else {
-                sellOrders.put(sellOrder.createKey(), sellOrder);
-                needCount = 0;
+                sellOrders.put(sellOrder.createSellKey(), sellOrder);
+                break;
             }
         } while (needCount != 0);
 

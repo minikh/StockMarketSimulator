@@ -24,36 +24,38 @@ class TradingGatewaySimulatorTest {
         UUID accountId = UUID.randomUUID();
         String stockName = "AAPL";
 
-        for (int i = 91; i <= 100; i++) {
+        for (int i = 81; i <= 100; i++) {
             CreateOrderReq order = CreateOrderReq.builder()
                     .orderType(OrderType.BUY)
-                    .count(5)
+                    .count(7)
                     .price(i)
 //                    .price(new Random().nextInt(20) + 80)
                     .build();
 
             tradingGatewaySimulator.addOrder(accountId, stockName, order);
-            Thread.sleep(10);
+            Thread.sleep(20);
         }
+        System.out.println();
         Thread.sleep(2_000);
-
         List<Trade> trades1 = tradeLedger.getTrades();
         assertThat(trades1.size()).isEqualTo(0);
 
-        for (int i = 0; i < 30; i++) {
+
+        for (int i = 95; i > 75; i--) {
             CreateOrderReq order = CreateOrderReq.builder()
                     .orderType(OrderType.SELL)
                     .count(3)
-                    .price(95)
+                    .price(i)
                     .build();
             tradingGatewaySimulator.addOrder(accountId, stockName, order);
-            Thread.sleep(10);
+            Thread.sleep(20);
         }
 
-        Thread.sleep(2_000);
 
+        System.out.println();
+        Thread.sleep(2_000);
         List<Trade> trades2 = tradeLedger.getTrades();
-        assertThat(trades2.size()).isEqualTo(12);
+        assertThat(trades2.size()).isEqualTo(14);
 
         for (int i = 0; i < 20; i++) {
             CreateOrderReq order = CreateOrderReq.builder()
@@ -62,13 +64,12 @@ class TradingGatewaySimulatorTest {
                     .price(80)
                     .build();
             tradingGatewaySimulator.addOrder(accountId, stockName, order);
-            Thread.sleep(10);
+            Thread.sleep(20);
         }
 
         Thread.sleep(2_000);
-
         List<Trade> trades3 = tradeLedger.getTrades();
-        assertThat(trades3.size()).isEqualTo(13);
+        assertThat(trades3.size()).isEqualTo(21);
     }
 
 }
