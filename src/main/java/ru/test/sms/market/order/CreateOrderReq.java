@@ -1,4 +1,4 @@
-package ru.test.sms.market;
+package ru.test.sms.market.order;
 
 import lombok.Builder;
 import lombok.Data;

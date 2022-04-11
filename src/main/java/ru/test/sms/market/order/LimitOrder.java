@@ -1,8 +1,9 @@
-package ru.test.sms.market;
+package ru.test.sms.market.order;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import ru.test.sms.market.account.Account;
 
 import java.util.UUID;
 

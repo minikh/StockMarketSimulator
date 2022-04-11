@@ -1,6 +1,10 @@
 package ru.test.sms.market;
 
 import org.springframework.stereotype.Service;
+import ru.test.sms.market.account.Account;
+import ru.test.sms.market.account.AccountService;
+import ru.test.sms.market.order.CreateOrderReq;
+import ru.test.sms.market.order.LimitOrder;
 
 import java.time.Instant;
 import java.util.UUID;

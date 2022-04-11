@@ -3,9 +3,12 @@ package ru.test.sms.market;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import ru.test.sms.market.order.CreateOrderReq;
+import ru.test.sms.market.order.OrderType;
+import ru.test.sms.market.trade.Trade;
+import ru.test.sms.market.trade.TradeLedger;
 
 import java.util.List;
-import java.util.Random;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;

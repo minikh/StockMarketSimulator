@@ -1,6 +1,7 @@
-package ru.test.sms.market;
+package ru.test.sms.market.order;
 
 import lombok.extern.slf4j.Slf4j;
+import ru.test.sms.market.trade.Trade;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentSkipListMap;

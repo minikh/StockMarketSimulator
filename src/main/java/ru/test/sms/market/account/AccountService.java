@@ -1,6 +1,7 @@
-package ru.test.sms.market;
+package ru.test.sms.market.account;
 
 import org.springframework.stereotype.Service;
+import ru.test.sms.market.trade.Trade;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -1,4 +1,4 @@
-package ru.test.sms.market;
+package ru.test.sms.market.trade;
 
 import org.springframework.stereotype.Service;
 

@@ -2,6 +2,8 @@ package ru.test.sms.market;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import ru.test.sms.market.order.CreateOrderReq;
+import ru.test.sms.market.order.LimitOrder;
 
 import java.net.URI;
 import java.util.UUID;

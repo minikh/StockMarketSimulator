@@ -1,7 +1,8 @@
-package ru.test.sms.market;
+package ru.test.sms.market.trade;
 
 import lombok.Builder;
 import lombok.Getter;
+import ru.test.sms.market.order.LimitOrder;
 
 @Getter
 @Builder

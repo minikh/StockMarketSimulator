@@ -3,6 +3,10 @@ package ru.test.sms.market;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import ru.test.sms.market.order.LimitOrder;
+import ru.test.sms.market.order.OrderBook;
+import ru.test.sms.market.trade.Trade;
+import ru.test.sms.market.trade.TradeLedger;
 
 import java.util.HashMap;
 import java.util.List;
