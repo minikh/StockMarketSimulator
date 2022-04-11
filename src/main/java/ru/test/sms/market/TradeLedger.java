@@ -1,6 +1,4 @@
-package ru.test.sms.app.market;
-
-import ru.test.sms.app.Trade;
+package ru.test.sms.market;
 
 import java.util.List;
 

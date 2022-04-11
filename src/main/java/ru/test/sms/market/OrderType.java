@@ -1,4 +1,4 @@
-package ru.test.sms.app;
+package ru.test.sms.market;
 
 public enum OrderType {
     BUY, SELL

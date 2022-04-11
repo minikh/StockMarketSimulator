@@ -1,7 +1,6 @@
-package ru.test.sms.app.market;
+package ru.test.sms.market;
 
 import org.springframework.stereotype.Service;
-import ru.test.sms.app.Account;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +15,7 @@ public class AccountService {
         return accounts.computeIfAbsent(accountId, k -> Account.builder().accountId(k).balance(10_000L).build());
     }
 
-    private void makeTransaction() {
+    private void makeTransaction(Trade trade) {
 
     }
 }

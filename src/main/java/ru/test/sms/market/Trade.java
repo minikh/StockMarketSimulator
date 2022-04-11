@@ -1,6 +1,7 @@
-package ru.test.sms.app;
+package ru.test.sms.market;
 
 import lombok.Getter;
+import ru.test.sms.market.LimitOrder;
 
 @Getter
 public class Trade {
