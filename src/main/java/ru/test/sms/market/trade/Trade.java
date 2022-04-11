@@ -4,12 +4,22 @@ import lombok.Builder;
 import lombok.Getter;
 import ru.test.sms.market.order.LimitOrder;
 
-@Getter
 @Builder
 public class Trade {
     private final Integer price;
-    private Integer count;
+    private final Integer count;
+    private final LimitOrder sellOrder;
+    private final LimitOrder buyOrder;
 
-    private LimitOrder sellOrder;
-    private LimitOrder buyOrder;
+    public LimitOrder getSellOrder() {
+        return sellOrder;
+    }
+
+    public LimitOrder getBuyOrder() {
+        return buyOrder;
+    }
+
+    public Integer getSum() {
+        return price * count;
+    }
 }

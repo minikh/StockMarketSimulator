@@ -44,11 +44,11 @@ public class OrderBook {
                 final Integer sellCount = sellOrder.getValue().getCount();
                 if (sellCount <= needCount) {
                     sellOrders.remove(sellOrder.getKey());
-                    log.info("Продано: {} шт {} по цене {} ({})", sellCount, sellOrder.getValue().getAccount().getAccountId(), sellOrder.getValue().getPrice(), buyOrder.getPrice());
+                    log.info("Продано: {} шт {} по цене {} ({})", sellCount, sellOrder.getValue().getAccount(), sellOrder.getValue().getPrice(), buyOrder.getPrice());
                     needCount -= sellCount;
                 } else {
                     sellOrder.getValue().minusCount(needCount);
-                    log.info("Куплено: {} шт {} по цене {} ({})", needCount, sellOrder.getValue().getAccount().getAccountId(), sellOrder.getValue().getPrice(), buyOrder.getPrice());
+                    log.info("Куплено: {} шт {} по цене {} ({})", needCount, sellOrder.getValue().getAccount(), sellOrder.getValue().getPrice(), buyOrder.getPrice());
                     needCount = 0;
                 }
 
@@ -78,11 +78,11 @@ public class OrderBook {
                 final Integer buyCount = buyOrder.getValue().getCount();
                 if (buyCount <= needCount) {
                     buyOrders.remove(buyOrder.getKey());
-                    log.info("Куплено: {} шт у {} по цене {} ({})", buyCount, buyOrder.getValue().getAccount().getAccountId(), buyOrder.getValue().getPrice(), sellOrder.getPrice());
+                    log.info("Куплено: {} шт у {} по цене {} ({})", buyCount, buyOrder.getValue().getAccount(), buyOrder.getValue().getPrice(), sellOrder.getPrice());
                     needCount -= buyCount;
                 } else {
                     buyOrder.getValue().minusCount(needCount);
-                    log.info("Куплено: {} шт у {} по цене {} ({})", needCount, buyOrder.getValue().getAccount().getAccountId(), buyOrder.getValue().getPrice(), sellOrder.getPrice());
+                    log.info("Куплено: {} шт у {} по цене {} ({})", needCount, buyOrder.getValue().getAccount(), buyOrder.getValue().getPrice(), sellOrder.getPrice());
                     needCount = 0;
                 }
 

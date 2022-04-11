@@ -13,25 +13,18 @@ import java.util.UUID;
 public class TradingGatewaySimulator {
 
     private final MatchingEngine matchingEngine;
-    private final AccountService accountService;
 
-    public TradingGatewaySimulator(
-            MatchingEngine matchingEngine,
-            AccountService accountService
-    ) {
+    public TradingGatewaySimulator(MatchingEngine matchingEngine) {
         this.matchingEngine = matchingEngine;
-        this.accountService = accountService;
     }
 
     public LimitOrder addOrder(UUID accountId, String stockName, CreateOrderReq order) {
-        final Account account = accountService.getAccount(accountId);
-
         final LimitOrder limitOrder = LimitOrder.builder()
                 .orderId(UUID.randomUUID())
                 .stock(stockName)
                 .orderType(order.getOrderType())
                 .count(order.getCount())
-                .account(account)
+                .account(accountId)
                 .price(order.getPrice())
                 .date(Instant.now().toEpochMilli())
                 .build();
@@ -41,10 +34,9 @@ public class TradingGatewaySimulator {
     }
 
     public void cancelOrder(UUID accountId, String stockName, UUID orderId) {
-        final Account account = accountService.getAccount(accountId);
+
 
         matchingEngine.cancelOrder(stockName, orderId);
-
 
 
     }

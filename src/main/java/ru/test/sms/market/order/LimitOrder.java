@@ -14,7 +14,7 @@ public class LimitOrder {
     private final UUID orderId;
     private final OrderType orderType;
     private final String stock;
-    private final Account account;
+    private final UUID account;
     private final Integer price;
     private final Long date;
 
