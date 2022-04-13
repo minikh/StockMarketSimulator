@@ -3,6 +3,7 @@ package ru.test.sms.market;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import ru.test.sms.config.MarketWebSocket;
 import ru.test.sms.market.account.Account;
 import ru.test.sms.market.account.AccountService;
 import ru.test.sms.market.order.CancelOrderReq;
@@ -25,10 +26,12 @@ public class MatchingEngine {
 
     private final Map<String, OrderBook> orderBooks = new HashMap<>();
     private final TradeLedger tradeLedger;
+    private final MarketWebSocket marketWebSocket;
 
-    public MatchingEngine(AccountService accountService, TradeLedger tradeLedger) {
+    public MatchingEngine(AccountService accountService, TradeLedger tradeLedger, MarketWebSocket marketWebSocket) {
         this.accountService = accountService;
         this.tradeLedger = tradeLedger;
+        this.marketWebSocket = marketWebSocket;
     }
 
     public void addOrder(LimitOrder limitOrder) {
@@ -68,7 +71,7 @@ public class MatchingEngine {
         final LimitOrder limitOrder = queue.poll();
         if (limitOrder == null) return;
 
-        final OrderBook orderBook = orderBooks.computeIfAbsent(limitOrder.getStock(), OrderBook::new);
+        final OrderBook orderBook = orderBooks.computeIfAbsent(limitOrder.getStock(), symbol -> new OrderBook(symbol, marketWebSocket));
         final List<Trade> tradeList = orderBook.addOrder(limitOrder);
 
         tradeLedger.add(tradeList);

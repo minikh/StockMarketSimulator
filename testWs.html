@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>MarketTerminal</title>
+</head>
+<body>
+
+<div class="events" style="word-wrap: break-word; white-space: pre-wrap;"> </div>
+
+<script>
+    var clientWebSocket = new WebSocket("ws://test:test@localhost:8080/api/ws/orders");
+    clientWebSocket.onopen = function() {
+        console.log("clientWebSocket.onopen", clientWebSocket);
+        console.log("clientWebSocket.readyState", "websocketstatus");
+    }
+    clientWebSocket.onclose = function(error) {
+        console.log("clientWebSocket.onclose", clientWebSocket, error);
+        events("Closing connection");
+    }
+    clientWebSocket.onerror = function(error) {
+        console.log("clientWebSocket.onerror", clientWebSocket, error);
+        events("An error occured");
+    }
+    clientWebSocket.onmessage = function(error) {
+        console.log("clientWebSocket.onmessage", clientWebSocket, error);
+        events(error.data);
+    }
+    function events(responseEvent) {
+        document.querySelector(".events").innerHTML += responseEvent +'<br><br>';
+    }
+</script>
+</body>
+</html>
