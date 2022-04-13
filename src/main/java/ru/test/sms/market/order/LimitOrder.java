@@ -32,4 +32,8 @@ public class LimitOrder {
 
         this.count -= count;
     }
+
+    public String info() {
+        return String.format("Order with ID %s added: %s %s %s @ %s", orderId, orderType, stock, count, price);
+    }
 }
