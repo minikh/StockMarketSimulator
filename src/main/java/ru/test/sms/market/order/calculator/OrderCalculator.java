@@ -1,8 +1,9 @@
-package ru.test.sms.market.order;
+package ru.test.sms.market.order.calculator;
 
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
-import ru.test.sms.config.MarketWebSocket;
+import ru.test.sms.market.MarketWebSocket;
+import ru.test.sms.market.order.LimitOrder;
 import ru.test.sms.market.order.key.OrderKey;
 import ru.test.sms.market.trade.Trade;
 
@@ -13,7 +14,7 @@ import java.util.concurrent.ConcurrentSkipListMap;
 
 @Builder
 @Slf4j
-public class OrderCalculator {
+public class OrderCalculator implements Calculator {
 
     private final LimitOrder newOrder;
     private final ConcurrentSkipListMap<OrderKey, LimitOrder> orders;

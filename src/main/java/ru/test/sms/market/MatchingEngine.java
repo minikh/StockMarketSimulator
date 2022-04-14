@@ -3,10 +3,8 @@ package ru.test.sms.market;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import ru.test.sms.config.MarketWebSocket;
 import ru.test.sms.market.account.Account;
 import ru.test.sms.market.account.AccountService;
-import ru.test.sms.market.order.CancelOrderReq;
 import ru.test.sms.market.order.LimitOrder;
 import ru.test.sms.market.order.OrderBook;
 import ru.test.sms.market.trade.Trade;
@@ -15,7 +13,6 @@ import ru.test.sms.market.trade.TradeLedger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Service
@@ -23,7 +20,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class MatchingEngine {
     private final AccountService accountService;
     private final ConcurrentLinkedQueue<LimitOrder> queue = new ConcurrentLinkedQueue<>();
-
     private final Map<String, OrderBook> orderBooks = new HashMap<>();
     private final TradeLedger tradeLedger;
     private final MarketWebSocket marketWebSocket;
@@ -48,21 +44,12 @@ public class MatchingEngine {
         queue.add(limitOrder);
     }
 
-    public void cancelOrder(UUID accountId, String stockName, CancelOrderReq order) {
-        final OrderBook orderBook = orderBooks.get(stockName);
-        final Account account = accountService.getAccount(accountId);
-        if (orderBook == null) throw new IllegalArgumentException("Stock " + stockName + " does not exist");
+    public void cancelOrder(LimitOrder order) {
+        final OrderBook orderBook = orderBooks.get(order.getStock());
+        final Account account = accountService.getAccount(order.getAccount());
+        if (orderBook == null) throw new IllegalArgumentException("Stock " + order.getStock() + " does not exist");
 
-        switch (order.getOrderType()) {
-            case BUY:
-//                account.reserveMoney(accountService.brokerCommission);
-                break;
-            case SELL:
-//                account.reserveMoney(limitOrder.getCount() * limitOrder.getPrice() + accountService.brokerCommission);
-                break;
-        }
-
-//        queue.add(order);
+        queue.add(order);
     }
 
     //    @Scheduled(fixedDelay = 1_000)

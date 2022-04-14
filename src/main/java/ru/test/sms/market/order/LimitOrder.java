@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 import ru.test.sms.market.order.key.BuyOrderKey;
+import ru.test.sms.market.order.key.CancelOrderKey;
 import ru.test.sms.market.order.key.OrderKey;
 import ru.test.sms.market.order.key.SellOrderKey;
 
@@ -31,19 +32,14 @@ public class LimitOrder {
             case SELL:
                 key = new SellOrderKey(orderId, date, price);
                 break;
+            case CANCEL:
+                key = new CancelOrderKey(new SellOrderKey(orderId, date, price), new BuyOrderKey(orderId, date, price));
+                break;
             default:
                 throw new RuntimeException();
         }
         return key;
     }
-
-//    public SellOrderKey createSellKey() {
-//        return new SellOrderKey(orderId, date, price);
-//    }
-//
-//    public BuyOrderKey createBuyKey() {
-//        return new BuyOrderKey(orderId, date, price);
-//    }
 
     public void minusCount(Integer count) {
         if (this.count < count) throw new IllegalArgumentException("Количество не может быть отрицатьельным");

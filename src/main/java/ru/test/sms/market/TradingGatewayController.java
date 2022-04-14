@@ -2,7 +2,6 @@ package ru.test.sms.market;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.test.sms.market.order.CancelOrderReq;
 import ru.test.sms.market.order.CreateOrderReq;
 import ru.test.sms.market.order.LimitOrder;
 
@@ -29,12 +28,12 @@ public class TradingGatewayController {
         return ResponseEntity.created(URI.create(createdOrder.getOrderId().toString())).build();
     }
 
-    @PostMapping("/{stockName}/cancel")
+    @DeleteMapping("/{stockName}/{orderId}")
     public void cancelOrder(
             @RequestHeader("accountId") UUID accountId,
             @PathVariable String stockName,
-            @RequestBody CancelOrderReq order
+            @PathVariable UUID orderId
     ) {
-        matchingEngine.cancelOrder(accountId, stockName, order);
+        matchingEngine.cancelOrder(accountId, stockName, orderId);
     }
 }

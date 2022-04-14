@@ -1,9 +1,9 @@
 package ru.test.sms.market;
 
 import org.springframework.stereotype.Service;
-import ru.test.sms.market.order.CancelOrderReq;
 import ru.test.sms.market.order.CreateOrderReq;
 import ru.test.sms.market.order.LimitOrder;
+import ru.test.sms.market.order.OrderType;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -32,7 +32,14 @@ public class TradingGatewaySimulator {
         return limitOrder;
     }
 
-    public void cancelOrder(UUID accountId, String stockName, CancelOrderReq order) {
-        matchingEngine.cancelOrder(accountId, stockName, order);
+    public void cancelOrder(UUID accountId, String stockName, UUID orderId) {
+        final LimitOrder cancelOrder = LimitOrder.builder()
+                .orderId(orderId)
+                .stock(stockName)
+                .orderType(OrderType.CANCEL)
+                .account(accountId)
+                .build();
+
+        matchingEngine.cancelOrder(cancelOrder);
     }
 }

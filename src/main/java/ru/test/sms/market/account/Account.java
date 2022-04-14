@@ -44,6 +44,16 @@ public class Account {
         }
     }
 
+    public void rollbackTransaction(Integer amount) {
+        lock.lock();
+        try {
+            reservedBalance.set(reservedBalance.get() - amount);
+            balance += amount;
+        } finally {
+            lock.unlock();
+        }
+    }
+
     public UUID getAccountId() {
         return accountId;
     }
