@@ -26,75 +26,37 @@ public class OrderBook {
         this.marketWebSocket = marketWebSocket;
     }
 
-    public List<Trade> addOrder(LimitOrder limitOrder) {
-        List<Trade> tradeList = null;
-        switch (limitOrder.getOrderType()) {
+    public List<Trade> addOrder(LimitOrder newOrder) {
+
+        final OrderCalculator orderCalculator;
+        switch (newOrder.getOrderType()) {
             case BUY:
-                tradeList = computeOrder(limitOrder, buyOrders, sellOrders, sellMessage);
+                orderCalculator = OrderCalculator.builder()
+                        .newOrder(newOrder)
+                        .orders(buyOrders)
+                        .oppositeOrders(sellOrders)
+                        .formatMessage(sellMessage)
+                        .marketWebSocket(marketWebSocket)
+                        .build();
                 break;
             case SELL:
-                tradeList = computeOrder(limitOrder, sellOrders, buyOrders, buyMessage);
+                orderCalculator = OrderCalculator.builder()
+                        .newOrder(newOrder)
+                        .orders(sellOrders)
+                        .oppositeOrders(buyOrders)
+                        .formatMessage(buyMessage)
+                        .marketWebSocket(marketWebSocket)
+                        .build();
                 break;
+            default:
+                throw new RuntimeException();
         }
+
+        final List<Trade> tradeList = orderCalculator.computeOrder();
 
         log.info("Заявок на продажу: {}. Заявок на покупку: {}", sellOrders.size(), buyOrders.size());
 
         return tradeList != null ? tradeList : new ArrayList<>();
-    }
-
-    private boolean hasOppositeOrder(Map.Entry<OrderKey, LimitOrder> orderFromDom, LimitOrder newOrder) {
-        boolean result = false;
-        switch (newOrder.getOrderType()) {
-            case BUY:
-                result = orderFromDom != null && orderFromDom.getValue().getPrice() >= newOrder.getPrice();
-                break;
-            case SELL:
-                result = orderFromDom != null && orderFromDom.getValue().getPrice() <= newOrder.getPrice();
-                break;
-        }
-        return result;
-    }
-
-    private List<Trade> computeOrder(
-            LimitOrder newOrder,
-            ConcurrentSkipListMap<OrderKey, LimitOrder> orders,
-            ConcurrentSkipListMap<OrderKey, LimitOrder> oppositeOrders,
-            String formatMessage
-    ) {
-        Integer needCount = newOrder.getCount();
-        final List<Trade> tradeList = new ArrayList<>();
-
-        do {
-            final Map.Entry<OrderKey, LimitOrder> order = oppositeOrders.lastEntry();
-            if (hasOppositeOrder(order, newOrder)) {
-                final Integer countForCompute = order.getValue().getCount();
-                final String message;
-                if (countForCompute <= needCount) {
-                    oppositeOrders.remove(order.getKey());
-                    message = String.format(formatMessage, countForCompute, order.getValue().getAccount(), order.getValue().getPrice(), newOrder.getPrice());
-                    needCount -= countForCompute;
-                    newOrder.minusCount(countForCompute);
-                } else {
-                    order.getValue().minusCount(needCount);
-                    message = String.format(formatMessage, needCount, order.getValue().getAccount(), order.getValue().getPrice(), newOrder.getPrice());
-                    needCount = 0;
-                }
-                log.info(message);
-                marketWebSocket.sendMessage(message);
-
-                tradeList.add(Trade.builder()
-                        .buyOrder(order.getValue()).sellOrder(newOrder)
-                        .count(countForCompute)
-                        .price(order.getValue().getPrice())
-                        .build());
-            } else {
-                orders.put(newOrder.createKey(), newOrder);
-                marketWebSocket.sendMessage(newOrder.info());
-                break;
-            }
-        } while (needCount != 0);
-
-        return tradeList;
     }
 
     public void cancelOrder(UUID orderId) {
