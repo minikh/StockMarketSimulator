@@ -12,3 +12,6 @@
 
 # Swagger
     http://localhost:8080/api/swagger-ui/index.html?url=/api/api-docs
+
+# WebSocket 
+    open testWs.html
