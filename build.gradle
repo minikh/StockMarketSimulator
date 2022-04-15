@@ -21,7 +21,10 @@ repositories {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.shell:spring-shell-starter:2.0.1.RELEASE'
-    implementation("org.springframework.boot:spring-boot-starter-websocket")
+    implementation "org.springframework.boot:spring-boot-starter-websocket"
+
+    implementation 'org.springdoc:springdoc-openapi-ui:1.6.7'
+    implementation "io.springfox:springfox-swagger-ui:3.0.0"
 
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
