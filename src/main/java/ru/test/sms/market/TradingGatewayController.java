@@ -12,10 +12,10 @@ import java.util.UUID;
 @RequestMapping("/gateway")
 public class TradingGatewayController {
 
-    private final TradingGatewaySimulator matchingEngine;
+    private final TradingGatewaySimulator tradingGatewaySimulator;
 
     public TradingGatewayController(TradingGatewaySimulator tradingGateway) {
-        this.matchingEngine = tradingGateway;
+        this.tradingGatewaySimulator = tradingGateway;
     }
 
     @PostMapping("/{stockName}")
@@ -24,7 +24,7 @@ public class TradingGatewayController {
             @PathVariable String stockName,
             @RequestBody CreateOrderReq order
     ) {
-        final LimitOrder createdOrder = matchingEngine.addOrder(accountId, stockName, order);
+        final LimitOrder createdOrder = tradingGatewaySimulator.addOrder(accountId, stockName, order);
         return ResponseEntity.created(URI.create(createdOrder.getOrderId().toString())).build();
     }
 
@@ -34,6 +34,6 @@ public class TradingGatewayController {
             @PathVariable String stockName,
             @PathVariable UUID orderId
     ) {
-        matchingEngine.cancelOrder(accountId, stockName, orderId);
+        tradingGatewaySimulator.cancelOrder(accountId, stockName, orderId);
     }
 }
